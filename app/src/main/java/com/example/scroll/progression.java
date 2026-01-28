@@ -3,6 +3,7 @@ package com.example.scroll;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class progression extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnCreateContextMenuListener {
@@ -37,7 +39,7 @@ public class progression extends AppCompatActivity implements AdapterView.OnItem
 
         Intent intent = getIntent();
         a1 = intent.getIntExtra("a1", 1);
-        q = intent.getIntExtra("q", 1);
+        q = intent.getIntExtra("q", 2);
         type = intent.getBooleanExtra("type", true);
 
         if (type) {
@@ -68,7 +70,7 @@ public class progression extends AppCompatActivity implements AdapterView.OnItem
 
         selectedIndex = info.position;
 
-        menu.setHeaderTitle("what you want to do");
+        menu.setHeaderTitle("what you want to know");
         menu.add("sum");
         menu.add("index");
     }
@@ -77,7 +79,7 @@ public class progression extends AppCompatActivity implements AdapterView.OnItem
     public boolean onContextItemSelected(MenuItem item) {
         String oper = item.getTitle().toString();
         int result = 0;
-        int n = selectedIndex + 1; // sequence index starts from 1
+        int n = selectedIndex + 1;
 
         if (oper.equals("sum")) {
             if (type) {
@@ -100,6 +102,23 @@ public class progression extends AppCompatActivity implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int n, long id) {}
-}
 
-//ans.setText(list[position].toString());
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        String temp = item.getTitle().toString();
+        if (temp.equals("Credits")) {
+            Intent shaw = new Intent(this, MyActivityName.class);
+            startActivity(shaw);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+}
