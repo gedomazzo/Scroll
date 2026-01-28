@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Scroll">
         <activity
+            android:name=".progression"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
