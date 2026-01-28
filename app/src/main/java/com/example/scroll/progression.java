@@ -2,15 +2,30 @@ package com.example.scroll;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class progression extends AppCompatActivity {
+public class progression extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnCreateContextMenuListener {
 
     Integer[] list = new Integer[20];
     ListView lister;
+
+    TextView ans;
+
+    boolean EHFM; // end help for me
+
+    int a1;
+    int q;
+    boolean type;
+
+    int selectedIndex = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,26 +33,73 @@ public class progression extends AppCompatActivity {
         setContentView(R.layout.activity_progression);
 
         lister = findViewById(R.id.list);
+        ans = findViewById(R.id.ans);
 
         Intent intent = getIntent();
-        int a1 = intent.getIntExtra("a1", 1); // Default to 1 to avoid multiplying by 0
-        int q = intent.getIntExtra("q", 1);   // Default to 1 to avoid multiplying by 0 or 1
-        boolean type = intent.getBooleanExtra("type", true);
+        a1 = intent.getIntExtra("a1", 1);
+        q = intent.getIntExtra("q", 1);
+        type = intent.getBooleanExtra("type", true);
 
-        if (type) { // Geometric
+        if (type) {
             for (int n = 0; n < 20; n++) {
-                // Math.pow returns a double, so we must cast it to an int
                 list[n] = (int) (a1 * Math.pow(q, n));
             }
-        } else { // Arithmetic
-            int current = a1;
+        } else {
             for (int n = 0; n < 20; n++) {
-                list[n] = current;
-                current += q;
+                list[n] = a1 + n * q;
             }
         }
 
         ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         lister.setAdapter(adapter);
+        lister.setOnItemClickListener(this);
+        lister.setOnCreateContextMenuListener(this);
+
+
+
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, view, menuInfo);
+
+        AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo) menuInfo;
+
+        selectedIndex = info.position;
+
+        menu.setHeaderTitle("what you want to do");
+        menu.add("sum");
+        menu.add("index");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        String oper = item.getTitle().toString();
+        int result = 0;
+        int n = selectedIndex + 1; // sequence index starts from 1
+
+        if (oper.equals("sum")) {
+            if (type) {
+                // geometric sum
+                result = (int) (a1 * (Math.pow(q, n) - 1) / (q - 1));
+            } else {
+                // arithmetic sum
+                result = n * (2 * a1 + (n - 1) * q) / 2;
+            }
+            ans.setText("Sum = " + result);
+
+        } else if (oper.equals("index")) {
+            ans.setText("Index = " + n);
+        }
+
+        return true;
+    }
+
+
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int n, long id) {}
 }
+
+//ans.setText(list[position].toString());
